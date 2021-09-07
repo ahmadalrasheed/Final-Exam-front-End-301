@@ -12,7 +12,7 @@ class AllDataAPI extends Component {
     }
 
     async componentDidMount(){
-        let DataFromApi=await axios.get(`http://localhost:3001/apidata`)
+        let DataFromApi=await axios.get(`${process.env.REACT_APP_LINK_BACKEND}/apidata`)
         console.log(DataFromApi.data);
         this.setState({
             apidata:DataFromApi.data

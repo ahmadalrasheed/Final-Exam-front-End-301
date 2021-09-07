@@ -25,7 +25,7 @@ class App extends React.Component {
   AddToFav= async(item)=>{
     item.email=this.props.auth0.user.email;
     // console.log(item);
-    let AddedToFavItems=await axios.post(`http://localhost:3001/addedtofav`,item)
+    let AddedToFavItems=await axios.post(`${process.env.REACT_APP_LINK_BACKEND}/addedtofav`,item)
     await this.setState({
       addedtomyfav:AddedToFavItems.data
     })
@@ -35,7 +35,7 @@ class App extends React.Component {
   DeleteItem=async (itemid)=>{
      console.log(itemid);
     let email=this.props.auth0.user.email;
-     let MyFavAfterDeletion=await axios.delete(`http://localhost:3001/deleteitem/${itemid}`,{params:email})
+     let MyFavAfterDeletion=await axios.delete(`${process.env.REACT_APP_LINK_BACKEND}/deleteitem/${itemid}`,{params:email})
     //  console.log(MyFavAfterDeletion.data);
      await this.setState({
       addedtomyfav:MyFavAfterDeletion.data
@@ -54,7 +54,7 @@ class App extends React.Component {
       id:this.state.updateditemid
     }
     // console.log(NewItem);
-    let UpdatedItems= await axios.put(`http://localhost:3001/updateitem`,NewItem)
+    let UpdatedItems= await axios.put(`${process.env.REACT_APP_LINK_BACKEND}/updateitem`,NewItem)
     this.setState({
       addedtomyfav:UpdatedItems.data
     })

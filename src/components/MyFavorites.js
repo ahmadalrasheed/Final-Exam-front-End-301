@@ -19,7 +19,7 @@ class MyFavorites extends React.Component {
 
   async componentDidMount(){
     let user=this.props.auth0.user.email;
-    let MyFavoraties=await axios.get(`http://localhost:3001/myfavoraties?email=${user}`)
+    let MyFavoraties=await axios.get(`${process.env.REACT_APP_LINK_BACKEND}/myfavoraties?email=${user}`)
     await this.setState({
       Myfavoraties:MyFavoraties.data
     })
