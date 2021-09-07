@@ -6,6 +6,8 @@ import MyFavorites from './components/MyFavorites';
 import AllDataAPI from './components/AllDataAPI'
 import Footer from './Footer';
 import { withAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -13,7 +15,57 @@ import {
 } from "react-router-dom";
 
 class App extends React.Component {
+  constructor(props){
+    super(props);
+    this.state={
+      updateditemid:''
+    }
+  }
 
+  AddToFav= async(item)=>{
+    item.email=this.props.auth0.user.email;
+    // console.log(item);
+    let AddedToFavItems=await axios.post(`http://localhost:3001/addedtofav`,item)
+    await this.setState({
+      addedtomyfav:AddedToFavItems.data
+    })
+    console.log(this.state.addedtomyfav);
+  }
+
+  DeleteItem=async (itemid)=>{
+     console.log(itemid);
+    let email=this.props.auth0.user.email;
+     let MyFavAfterDeletion=await axios.delete(`http://localhost:3001/deleteitem/${itemid}`,{params:email})
+    //  console.log(MyFavAfterDeletion.data);
+     await this.setState({
+      addedtomyfav:MyFavAfterDeletion.data
+     })
+
+  }
+
+  UpdateItem=async(event)=>{
+    event.preventDefault();
+    let email=this.props.auth0.user.email;
+
+    let NewItem={
+      title:event.target.Title.value,
+      image:event.target.Image.value,
+      useremail:email,
+      id:this.state.updateditemid
+    }
+    // console.log(NewItem);
+    let UpdatedItems= await axios.put(`http://localhost:3001/updateitem`,NewItem)
+    this.setState({
+      addedtomyfav:UpdatedItems.data
+    })
+
+  }
+
+  UpdatedId=(itemid)=>{
+    this.setState({
+      updateditemid:itemid
+    })
+  }
   render() {
     return(
       <>
@@ -22,7 +74,7 @@ class App extends React.Component {
             <Switch>
 
               <Route exact path="/">
-                {this.props.auth0.isAuthenticated ? <MyFavorites /> : <Login />}
+                {this.props.auth0.isAuthenticated ? <MyFavorites UpdatedId={this.UpdatedId} UpdateItem={this.UpdateItem} DeleteItem={this.DeleteItem} addedtomyfav={this.state.addedtomyfav}/> : <Login />}
               </Route>
 
               <Route path="/profile">
@@ -30,7 +82,7 @@ class App extends React.Component {
               </Route>
 
               <Route path="/getAPIData">
-                <AllDataAPI/>
+                <AllDataAPI AddToFav={this.AddToFav}/>
               </Route>
               
             </Switch>
